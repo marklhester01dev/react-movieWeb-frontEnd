@@ -1,20 +1,52 @@
 import MovieCard from '../components/movieCard'
-import { useState } from 'react'
+import {getPopularMovies, searchMovies} from "../services/api"
+import { useState, useEffect } from 'react'
 //hook (state change)
 
 function Home() {
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState('');
   //state       //function
   //the state changes when we call the function
-  const movies = [
-    { id: 1, title: 'John Wick', release_date: '2020' },
-    { id: 2, title: 'Your Name', release_date: '2017' },
-    { id: 3, title: 'Suzume no Tojimari', release_date: '2024' },
-  ]
+  const[movies, setMovies] = useState([]); //gets the movies
+  const [error, setError] = useState(null); //sets the error
+  const [loading, setLoading] = useState(true); //indicates that the movies are loading
 
-  const handleSearch = (event) => {
+  useEffect(() => {
+    const loadPopularMovies = async() => {
+      try{
+        const popularMovies = await getPopularMovies();
+        setMovies(popularMovies);
+      } catch(err){
+        console.log(err)
+        setError("Failed to load movies...")
+      } finally{
+        setLoading(false);
+      }
+    }
+
+    loadPopularMovies();
+  }, []) 
+  // call the function when the dependency array changes (after every single re-render), no changes === one time render
+
+  const handleSearch = async(event) => {
     event.preventDefault()
-    alert(searchQuery)
+    if(!searchQuery.trim()) return;
+    if(loading) return;
+
+    setLoading(true); 
+    // Currently loading results
+    try{
+      const searchResults = await searchMovies(searchQuery);
+      setMovies(searchResults);
+      setError(null); //then we clear it here
+    } catch(err){
+        console.log(err);
+        setError("Failed to search movies...") //if we did an error before
+    } finally{
+      setLoading(false)
+    }
+
+    setSearchQuery(""); // restarts the input value to an empty string after clicking search
     //when we change the state the component re-renders itself to update
   }
 
@@ -39,7 +71,10 @@ function Home() {
         </button>
       </form>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
+      {error && <div className="error-message">{error}</div>} 
+      {/* if there is an error it will appear */}
+
+{loading ? <div className="loading">Loading...</div> : <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
         {movies.map(
           (movie) => (
             <MovieCard movie={movie} key={movie.id} />
@@ -47,6 +82,7 @@ function Home() {
           //react needs to know which components to update based on the interactions that happen with the webpage
         )}
       </div>
+}
     </div>
   )
 }

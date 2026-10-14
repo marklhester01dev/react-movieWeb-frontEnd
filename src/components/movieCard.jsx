@@ -7,9 +7,9 @@ function MovieCard({ movie }) {
   return (
     <div className="group overflow-hidden rounded-2xl bg-neutral-900 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:ring-rose-500/40 hover:shadow-xl hover:shadow-black/50">
       <div className="relative aspect-2/3 overflow-hidden bg-neutral-800">
-        {movie.url ? (
+        {movie.poster_path ? (
           <img
-            src={movie.url}
+            src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
             alt={movie.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -34,7 +34,7 @@ function MovieCard({ movie }) {
         <h3 className="truncate text-base font-semibold leading-snug text-white">
           {movie.title}
         </h3>
-        <p className="text-sm text-neutral-400">{movie.release_date}</p>
+        <p className="text-sm text-neutral-400">{movie.release_date?.split("-")[0]}</p>
       </div>
     </div>
   )
