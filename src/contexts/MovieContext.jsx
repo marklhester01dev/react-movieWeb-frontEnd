@@ -6,28 +6,46 @@ const MovieContext = createContext()
 
 const useMovieContext = () => useContext(MovieContext)
 
-const MovieProvider = (children) => {
+const MovieProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([])
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    const storedFavs = localStorage.getItem('favorites')
+    try {
+      const storedFavs = localStorage.getItem('favorites')
 
-    if (storedFavs) setFavorites(JSON.parse(storedFavs))
-    //stores all favorite movies in a list
-    // the list will be converted first into a JSON object
+      if (storedFavs) {
+        setFavorites(JSON.parse(storedFavs))
+      }
+    } catch (error) {
+      console.error('Failed to load favorites:', error)
+    } finally {
+      setIsLoaded(true)
+    }
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(favorites))
-  }, [favorites])
+    if (isLoaded) {
+      localStorage.setItem('favorites', JSON.stringify(favorites))
+    }
+  }, [favorites, isLoaded])
   // runs when the favorites array changes
   //anytime the favorite state changes, we'll update what we're storing
   //children will have access to everything here
   //logic related to our favorite movies
 
+  //stores all favorite movies in a list
+  // the list will be converted first into a JSON object
+
   //operations: 1 to add , 1 to remove, 1 to check (favorites)
   const addToFavorites = (movie) => {
-    setFavorites((prev) => [...prev, movie]) // updating state using UPDATER FUNCTION
+    setFavorites((prev) => {
+      if (prev.some((fav) => fav.id === movie.id)) {
+        return prev
+      }
+
+      return [...prev, movie]
+    })
   }
 
   const removeToFavorites = (movieId) => {

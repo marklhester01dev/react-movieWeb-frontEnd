@@ -1,7 +1,13 @@
+import { useMovieContext } from '../contexts/MovieContext'
 function MovieCard({ movie }) {
+  const { isFavorite, addToFavorites, removeToFavorites } = useMovieContext()
+  const favorite = isFavorite(movie.id)
+  //functions that will update the state from the context globally
   //{} property
-  function onFavoriteClick() {
-    alert('Clicked')
+  function onFavoriteClick(e) {
+    e.preventDefault()
+    if (favorite) removeToFavorites(movie.id)
+    else addToFavorites(movie)
   }
 
   return (
@@ -9,7 +15,7 @@ function MovieCard({ movie }) {
       <div className="relative aspect-2/3 overflow-hidden bg-neutral-800">
         {movie.poster_path ? (
           <img
-            src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -23,7 +29,7 @@ function MovieCard({ movie }) {
           <button
             onClick={onFavoriteClick}
             aria-label="Add to favorites"
-            className="flex size-10 items-center justify-center rounded-full bg-black/50 text-lg text-white backdrop-blur-sm transition hover:scale-110 hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400"
+            className={`flex size-10 items-center justify-center rounded-full bg-black/50 text-lg text-white backdrop-blur-sm transition hover:scale-110 hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 ${favorite ? 'active' : ''}`}
           >
             ♥
           </button>
