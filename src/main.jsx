@@ -9,6 +9,7 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-    {/* gives the ability to change what components we're rendering on screen based on the slash route, more of like the window.location.href in JS */}
+    {/* gives the ability to change what components we're rendering on screen based on the slash route, more of like the window.location.href in JS */ }
+    {/* Which is also a some kind of context because it gives access to routing */}
   </StrictMode>,
 )
