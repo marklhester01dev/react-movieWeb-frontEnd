@@ -8,6 +8,15 @@ const getPopularMovies = async () => {
     checkFetchStatus(res)
 
     const resData = await res.json()
+
+    if (renderTimeout(res)) {
+      renderError()
+    }
+
+    //QUESTIONS:
+    //problem here, what if slow network and the page still didn't load?
+    // what if the data is not there? and it cannot find the search query, what should be displayed in the web?
+
     return resData.results
   } catch (err) {
     renderError(err)
@@ -22,6 +31,7 @@ const searchMovies = async (searchQuery) => {
 
     checkFetchStatus(res)
     const resData = await res.json()
+
     return resData.results
   } catch (err) {
     renderError(err)
@@ -35,6 +45,12 @@ const checkFetchStatus = (res) => {
 }
 const renderError = (err) => {
   alert(`Failed to load movies. Try again. ${err ? err : ''}`)
+}
+
+const renderTimeout = (res) => {
+  setTimeout(() => {
+    res
+  }, 5000)
 }
 
 export { getPopularMovies, searchMovies }

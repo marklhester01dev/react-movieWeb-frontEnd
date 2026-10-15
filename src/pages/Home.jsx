@@ -4,13 +4,18 @@ import { useState, useEffect } from 'react'
 //hook (state change)
 
 function Home() {
-  const [searchQuery, setSearchQuery] = useState('')
-  //state       //function
-  //the state changes when we call the function
-  const [movies, setMovies] = useState([]) //gets the movies
+  const [searchQuery, setSearchQuery] = useState('') //the first state of the useState is the initializer function
+  //initial state       //set function //the state changes on the next render
+
+  //if the new value is identical to the present state, React will skip re-rendering the component and its children
+  // React updates the screen after all the event handlers have run
+  const [movies, setMovies] = useState([]) //gets the movies, initialize movies to [] (initializer)
   const [error, setError] = useState(null) //sets the error
   const [loading, setLoading] = useState(true) //indicates that the movies are loading
 
+  // Use State can only be declared at the top level of the component
+
+  //state is read only, replace instead of mutate (objects and arrays)
   useEffect(() => {
     const loadPopularMovies = async () => {
       try {
@@ -20,7 +25,7 @@ function Home() {
         console.log(err)
         setError('Failed to load movies...')
       } finally {
-        setLoading(false)
+        setLoading(false) //next state
       }
     }
 
