@@ -1,15 +1,21 @@
+import { useMovieContext } from '../contexts/MovieContext'
 function MovieCard({ movie }) {
+  const { isFavorite, addToFavorites, removeToFavorites } = useMovieContext()
+  const favorite = isFavorite(movie.id)
+  //functions that will update the state from the context globally
   //{} property
-  function onFavoriteClick() {
-    alert('Clicked')
+  function onFavoriteClick(e) {
+    e.preventDefault()
+    if (favorite) removeToFavorites(movie.id)
+    else addToFavorites(movie)
   }
 
   return (
-    <div className="group overflow-hidden rounded-2xl bg-neutral-900 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:ring-rose-500/40 hover:shadow-xl hover:shadow-black/50">
+    <div className="group overflow-hidden rounded-2xl bg-neutral-900 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 hover:ring-rose-500/40">
       <div className="relative aspect-2/3 overflow-hidden bg-neutral-800">
-        {movie.url ? (
+        {movie.poster_path ? (
           <img
-            src={movie.url}
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -19,11 +25,11 @@ function MovieCard({ movie }) {
           </div>
         )}
 
-        <div className="absolute inset-0 flex items-start justify-end bg-linear-to-b from-black/60 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
+        <div className="absolute inset-0 flex items-start justify-end bg-linear-to-b from-black/60 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-focus-within:opacity-100 group-hover:opacity-100">
           <button
             onClick={onFavoriteClick}
             aria-label="Add to favorites"
-            className="flex size-10 items-center justify-center rounded-full bg-black/50 text-lg text-white backdrop-blur-sm transition hover:scale-110 hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400"
+            className={`flex size-10 items-center justify-center rounded-full bg-black/50 text-lg text-white backdrop-blur-sm transition hover:scale-110 hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 ${favorite ? 'active' : ''}`}
           >
             ♥
           </button>
@@ -31,10 +37,12 @@ function MovieCard({ movie }) {
       </div>
 
       <div className="space-y-1 p-4">
-        <h3 className="truncate text-base font-semibold leading-snug text-white">
+        <h3 className="truncate text-base leading-snug font-semibold text-white">
           {movie.title}
         </h3>
-        <p className="text-sm text-neutral-400">{movie.release_date}</p>
+        <p className="text-sm text-neutral-400">
+          {movie.release_date?.split('-')[0]}
+        </p>
       </div>
     </div>
   )
